@@ -1,5 +1,5 @@
-let dispOperandA = 0;
-let dispOperandB = 0;
+let dispOperandA = '';
+let dispOperandB = '';
 let dispOperator = '';
 
 function add(a, b) {
@@ -33,15 +33,54 @@ function operate(operator, a, b) {
 
 function setUpButtonClicks() {
   const digitButtons = document.querySelectorAll(".digit");
+  const opButtons = document.querySelectorAll(".op");
+  const equalsButton = document.querySelector(".equals");
 
   for (let i = 0; i < digitButtons.length; i++) {
     digitButtons[i].addEventListener("click", (e) => {
-      const display = document.querySelector(".display");
-      const digitValue = Number(digitButtons[i].textContent);
-      display.textContent = digitValue;
-      dispOperandA = digitValue;
+      const digit = digitButtons[i].textContent; 
+      const display = document.querySelector(".display"); 
+
+      if (dispOperator != '') {
+        if (display.textContent == dispOperandA) {
+          display.textContent = '';
+        }
+        dispOperandB += digit;
+      } else {
+        if (dispOperandA == '' && dispOperandB == '') {
+          display.textContent = '';
+        }
+        dispOperandA += digit;
+      }
+
+      display.textContent += digit;    
     })
   }
+
+  for (let i = 0; i < opButtons.length; i++) {
+    opButtons[i].addEventListener("click", (e) => {
+      const prevOp = dispOperator;
+      dispOperator = opButtons[i].textContent;
+      if (dispOperandA != '' && dispOperandB != '' && prevOp) {
+        const result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+        document.querySelector(".display").textContent = result;
+        dispOperandA = String(result);
+        dispOperandB = '';
+      }
+    })
+  }
+
+  equalsButton.addEventListener("click", (e) => {
+    if (dispOperandA != '' && dispOperandB != '' && dispOperator != '') {
+      const result = operate(
+        dispOperator, Number(dispOperandA), Number(dispOperandB)
+      );
+      document.querySelector(".display").textContent = result;
+      dispOperandA = '';
+      dispOperandB = '';
+      dispOperator = '';
+    }
+  })
 }
 
 setUpButtonClicks();
