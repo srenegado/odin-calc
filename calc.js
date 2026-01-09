@@ -25,8 +25,10 @@ function operate(operator, a, b) {
     case '-':
       return subtract(a, b);
     case '*':
+    case '×':
       return multiply(a, b);
     case '/':
+    case '÷':
       return divide(a, b);
   }
 }
@@ -42,7 +44,7 @@ function setUpButtonClicks() {
       const digit = digitButtons[i].textContent; 
       const display = document.querySelector(".display"); 
 
-      if (dispOperator != '') {
+      if (dispOperandA != '' && dispOperator != '') {
         if (display.textContent == dispOperandA) {
           display.textContent = '';
         }
@@ -60,13 +62,15 @@ function setUpButtonClicks() {
 
   for (let i = 0; i < opButtons.length; i++) {
     opButtons[i].addEventListener("click", (e) => {
-      const prevOp = dispOperator;
-      dispOperator = opButtons[i].textContent;
-      if (dispOperandA != '' && dispOperandB != '' && prevOp) {
-        const result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
-        document.querySelector(".display").textContent = result;
-        dispOperandA = String(result);
-        dispOperandB = '';
+      if (dispOperandA != '') {
+        const prevOp = dispOperator;
+        dispOperator = opButtons[i].textContent;
+        if (dispOperandB != '' && prevOp) {
+          const result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+          document.querySelector(".display").textContent = result;
+          dispOperandA = String(result);
+          dispOperandB = '';
+        }
       }
     })
   }
