@@ -30,3 +30,18 @@ function operate(operator, a, b) {
       return divide(a, b);
   }
 }
+
+function setUpButtonClicks() {
+  const digitButtons = document.querySelectorAll(".digit");
+
+  for (let i = 0; i < digitButtons.length; i++) {
+    digitButtons[i].addEventListener("click", (e) => {
+      const display = document.querySelector(".display");
+      const digitValue = Number(digitButtons[i].textContent);
+      display.textContent = digitValue;
+      dispOperandA = digitValue;
+    })
+  }
+}
+
+setUpButtonClicks();
