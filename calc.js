@@ -35,6 +35,7 @@ function setUpButtonClicks() {
   const digitButtons = document.querySelectorAll(".digit");
   const opButtons = document.querySelectorAll(".op");
   const equalsButton = document.querySelector(".equals");
+  const clearButton = document.querySelector(".clear");
 
   for (let i = 0; i < digitButtons.length; i++) {
     digitButtons[i].addEventListener("click", (e) => {
@@ -80,6 +81,13 @@ function setUpButtonClicks() {
       dispOperandB = '';
       dispOperator = '';
     }
+  })
+
+  clearButton.addEventListener("click", (e) => {
+    document.querySelector(".display").textContent = '0';
+    dispOperandA = '';
+    dispOperandB = '';
+    dispOperator = '';
   })
 }
 
