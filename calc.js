@@ -44,19 +44,22 @@ function setUpButtonClicks() {
       const digit = digitButtons[i].textContent; 
       const display = document.querySelector(".display"); 
 
-      if (dispOperandA != '' && dispOperator != '') {
+      if (dispOperator != '') {
         if (display.textContent == dispOperandA) {
           display.textContent = '';
         }
-        dispOperandB += digit;
-      } else {
-        if (dispOperandA == '' && dispOperandB == '') {
-          display.textContent = '';
+        if (dispOperator == '=') {
+          dispOperandA = digit;
+          dispOperator = '';
+        } else {
+          dispOperandB = (dispOperandB == '0') ? digit : dispOperandB + digit;
         }
-        dispOperandA += digit;
+      } else {
+        dispOperandA = (dispOperandA == '0') ? digit : dispOperandA + digit;
       }
 
-      display.textContent += digit;    
+      display.textContent = (display.textContent == '0') ? 
+        digit : display.textContent + digit; 
     })
   }
 
@@ -65,6 +68,7 @@ function setUpButtonClicks() {
       if (dispOperandA != '') {
         const prevOp = dispOperator;
         dispOperator = opButtons[i].textContent;
+
         if (dispOperandB != '' && prevOp) {
           const result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
           document.querySelector(".display").textContent = result;
@@ -81,9 +85,9 @@ function setUpButtonClicks() {
         dispOperator, Number(dispOperandA), Number(dispOperandB)
       );
       document.querySelector(".display").textContent = result;
-      dispOperandA = '';
+      dispOperandA = String(result);
       dispOperandB = '';
-      dispOperator = '';
+      dispOperator = '=';
     }
   })
 
