@@ -1,4 +1,4 @@
-let dispOperandA = '';
+let dispOperandA = '0';
 let dispOperandB = '';
 let dispOperator = '';
 const divideByZeroError = "Divide by Zero Error";
@@ -44,6 +44,7 @@ function setUpButtonClicks() {
   const opButtons = document.querySelectorAll(".op");
   const equalsButton = document.querySelector(".equals");
   const clearButton = document.querySelector(".clear");
+  const decimalButton = document.querySelector(".decimal");
 
   for (let i = 0; i < digitButtons.length; i++) {
     digitButtons[i].addEventListener("click", (e) => {
@@ -112,9 +113,34 @@ function setUpButtonClicks() {
 
   clearButton.addEventListener("click", (e) => {
     document.querySelector(".display").textContent = '0';
-    dispOperandA = '';
+    dispOperandA = '0';
     dispOperandB = '';
     dispOperator = '';
+  })
+
+  decimalButton.addEventListener("click", (e) => {
+    const display = document.querySelector(".display");
+    
+    if (display.textContent.includes(".")) {
+      return;
+    }
+
+    if (dispOperator) {
+      if (display.textContent == dispOperandA) {
+        display.textContent = '';
+      }
+      if (dispOperator == '=') {
+        dispOperandA = '.';
+        dispOperator = '';
+      } else {
+        dispOperandB += '.';
+      }
+    } else {
+      dispOperandA += '.';
+    }
+
+    display.textContent = (display.textContent == divideByZeroError) ? 
+      '.' : display.textContent + '.';
   })
 }
 
