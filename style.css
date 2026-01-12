@@ -15,8 +15,9 @@ button {
 }
 
 .display {
+  margin: 0 auto;
   border: 1px solid grey;
+  border-radius: 10px;
   font-size: 24pt;
   text-align: right;
-  border-radius: 10px;
 }

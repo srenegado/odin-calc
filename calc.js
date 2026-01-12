@@ -33,6 +33,11 @@ function operate(operator, a, b) {
   }
 }
 
+function round(num, n) {
+  const scale = Math.pow(10, n);
+  return Math.round(num * scale) / scale;
+}
+
 function setUpButtonClicks() {
   const digitButtons = document.querySelectorAll(".digit");
   const opButtons = document.querySelectorAll(".op");
@@ -70,7 +75,8 @@ function setUpButtonClicks() {
         dispOperator = opButtons[i].textContent;
 
         if (dispOperandB != '' && prevOp) {
-          const result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+          let result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+          result = round(result, 9);
           document.querySelector(".display").textContent = result;
           dispOperandA = String(result);
           dispOperandB = '';
@@ -81,9 +87,10 @@ function setUpButtonClicks() {
 
   equalsButton.addEventListener("click", (e) => {
     if (dispOperandA != '' && dispOperandB != '' && dispOperator != '') {
-      const result = operate(
+      let result = operate(
         dispOperator, Number(dispOperandA), Number(dispOperandB)
       );
+      result = round(result, 9);
       document.querySelector(".display").textContent = result;
       dispOperandA = String(result);
       dispOperandB = '';
