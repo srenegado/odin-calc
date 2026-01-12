@@ -40,6 +40,7 @@ function round(num, n) {
 }
 
 function setUpButtonClicks() {
+  const display = document.querySelector(".display");
   const digitButtons = document.querySelectorAll(".digit");
   const opButtons = document.querySelectorAll(".op");
   const equalsButton = document.querySelector(".equals");
@@ -47,30 +48,20 @@ function setUpButtonClicks() {
   const decimalButton = document.querySelector(".decimal");
   const backspaceButton = document.querySelector(".backspace");
 
-  for (let i = 0; i < digitButtons.length; i++) {
-    digitButtons[i].addEventListener("click", (e) => {
-      const digit = digitButtons[i].textContent; 
-      const display = document.querySelector(".display"); 
+  document.addEventListener("keydown", (e) => {
+    console.log(e.key);
+    switch (e.key) {
+      case '0': case '1': case '2': case '3': case '4':
+      case '5': case '6': case '7': case '8': case '9':
+        handleDigit(e.key);
+    }
+  });
 
-      if (dispOperator) {
-        if (display.textContent == dispOperandA) {
-          display.textContent = '';
-        }
-        if (dispOperator == '=') {
-          dispOperandA = digit;
-          dispOperator = '';
-        } else {
-          dispOperandB = (dispOperandB == '0') ? digit : dispOperandB + digit;
-        }
-      } else {
-        dispOperandA = (dispOperandA == '0') ? digit : dispOperandA + digit;
-      }
-
-      display.textContent = (display.textContent == '0' || 
-        display.textContent == divideByZeroError) ? 
-        digit : display.textContent + digit; 
-    })
-  }
+  digitButtons.forEach((digitButton) => {
+    digitButton.addEventListener("click", () => {
+      handleDigit(digitButton.textContent);
+    });
+  });
 
   for (let i = 0; i < opButtons.length; i++) {
     opButtons[i].addEventListener("click", (e) => {
@@ -152,6 +143,26 @@ function setUpButtonClicks() {
       dispOperandA = '';
     }
   })
+
+  function handleDigit(digit) {
+    if (dispOperator) {
+      if (display.textContent == dispOperandA) {
+        display.textContent = '';
+      }
+      if (dispOperator == '=') {
+        dispOperandA = digit;
+        dispOperator = '';
+      } else {
+        dispOperandB = (dispOperandB == '0') ? digit : dispOperandB + digit;
+      }
+    } else {
+      dispOperandA = (dispOperandA == '0') ? digit : dispOperandA + digit;
+    }
+
+    display.textContent = (display.textContent == '0' || 
+      display.textContent == divideByZeroError) ? 
+      digit : display.textContent + digit; 
+  }
 }
 
 setUpButtonClicks();
