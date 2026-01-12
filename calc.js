@@ -1,6 +1,7 @@
 let dispOperandA = '';
 let dispOperandB = '';
 let dispOperator = '';
+const divideByZeroError = "Divide by Zero Error";
 
 function add(a, b) {
   return a + b;
@@ -49,7 +50,7 @@ function setUpButtonClicks() {
       const digit = digitButtons[i].textContent; 
       const display = document.querySelector(".display"); 
 
-      if (dispOperator != '') {
+      if (dispOperator) {
         if (display.textContent == dispOperandA) {
           display.textContent = '';
         }
@@ -63,22 +64,29 @@ function setUpButtonClicks() {
         dispOperandA = (dispOperandA == '0') ? digit : dispOperandA + digit;
       }
 
-      display.textContent = (display.textContent == '0') ? 
+      display.textContent = (display.textContent == '0' || 
+        display.textContent == divideByZeroError) ? 
         digit : display.textContent + digit; 
     })
   }
 
   for (let i = 0; i < opButtons.length; i++) {
     opButtons[i].addEventListener("click", (e) => {
-      if (dispOperandA != '') {
+      if (dispOperandA) {
         const prevOp = dispOperator;
         dispOperator = opButtons[i].textContent;
 
-        if (dispOperandB != '' && prevOp) {
-          let result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
-          result = round(result, 9);
-          document.querySelector(".display").textContent = result;
-          dispOperandA = String(result);
+        if (dispOperandB && prevOp) {
+          if (dispOperandB == '0' && prevOp == '÷') {
+            document.querySelector(".display").textContent = divideByZeroError;
+            dispOperandA = '';
+            dispOperator = '';
+          } else {
+            let result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+            result = round(result, 9);
+            document.querySelector(".display").textContent = result;
+            dispOperandA = String(result); 
+          }
           dispOperandB = '';
         }
       }
@@ -86,15 +94,19 @@ function setUpButtonClicks() {
   }
 
   equalsButton.addEventListener("click", (e) => {
-    if (dispOperandA != '' && dispOperandB != '' && dispOperator != '') {
-      let result = operate(
-        dispOperator, Number(dispOperandA), Number(dispOperandB)
-      );
-      result = round(result, 9);
-      document.querySelector(".display").textContent = result;
-      dispOperandA = String(result);
+    if (dispOperandA && dispOperandB && dispOperator) {
+      if (dispOperandB == '0' && dispOperator == '÷') {
+        document.querySelector(".display").textContent = divideByZeroError;
+        dispOperandA = '';
+        dispOperator = '';
+      } else {
+        let result = operate(dispOperator, Number(dispOperandA), Number(dispOperandB));
+        result = round(result, 9);
+        document.querySelector(".display").textContent = result;
+        dispOperandA = String(result);
+        dispOperator = '=';
+      }
       dispOperandB = '';
-      dispOperator = '=';
     }
   })
 
