@@ -39,7 +39,7 @@ function round(num, n) {
   return Math.round(num * scale) / scale;
 }
 
-function setUpButtonClicks() {
+function setUpButtonClicksAndPresses() {
   const display = document.querySelector(".display");
   const digitButtons = document.querySelectorAll(".digit");
   const opButtons = document.querySelectorAll(".op");
@@ -49,11 +49,26 @@ function setUpButtonClicks() {
   const backspaceButton = document.querySelector(".backspace");
 
   document.addEventListener("keydown", (e) => {
-    console.log(e.key);
     switch (e.key) {
       case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
         handleDigit(e.key);
+        break;
+      case '+': case '-': case '*': case '/':
+        handleOp(e.key);
+        break;
+      case '=': case 'Enter':
+        handleEquals();
+        break;
+      case 'Delete':
+        handleClear();
+        break;
+      case '.':
+        handleDecimal();
+        break;
+      case 'Backspace':
+        handleBackspace();
+        break;
     }
   });
 
@@ -63,86 +78,27 @@ function setUpButtonClicks() {
     });
   });
 
-  for (let i = 0; i < opButtons.length; i++) {
-    opButtons[i].addEventListener("click", (e) => {
-      if (dispOperandA) {
-        const prevOp = dispOperator;
-        dispOperator = opButtons[i].textContent;
-
-        if (dispOperandB && prevOp) {
-          if (dispOperandB == '0' && prevOp == '÷') {
-            document.querySelector(".display").textContent = divideByZeroError;
-            dispOperandA = '';
-            dispOperator = '';
-          } else {
-            let result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
-            result = round(result, 9);
-            document.querySelector(".display").textContent = result;
-            dispOperandA = String(result); 
-          }
-          dispOperandB = '';
-        }
-      }
-    })
-  }
+  opButtons.forEach((opButton) => {
+    opButton.addEventListener("click", () => {
+      handleOp(opButton.textContent);
+    });
+  });
 
   equalsButton.addEventListener("click", (e) => {
-    if (dispOperandA && dispOperandB && dispOperator) {
-      if (dispOperandB == '0' && dispOperator == '÷') {
-        document.querySelector(".display").textContent = divideByZeroError;
-        dispOperandA = '';
-        dispOperator = '';
-      } else {
-        let result = operate(dispOperator, Number(dispOperandA), Number(dispOperandB));
-        result = round(result, 9);
-        document.querySelector(".display").textContent = result;
-        dispOperandA = String(result);
-        dispOperator = '=';
-      }
-      dispOperandB = '';
-    }
+    handleEquals();
   });
 
   clearButton.addEventListener("click", (e) => {
-    document.querySelector(".display").textContent = '0';
-    dispOperandA = '0';
-    dispOperandB = '';
-    dispOperator = '';
+    handleClear();
   });
 
   decimalButton.addEventListener("click", (e) => {
-    const display = document.querySelector(".display");
-    
-    if (display.textContent.includes(".")) {
-      return;
-    }
-
-    if (dispOperator) {
-      if (display.textContent == dispOperandA) {
-        display.textContent = '';
-      }
-      if (dispOperator == '=') {
-        dispOperandA = '.';
-        dispOperator = '';
-      } else {
-        dispOperandB += '.';
-      }
-    } else {
-      dispOperandA += '.';
-    }
-
-    display.textContent = (display.textContent == divideByZeroError) ? 
-      '.' : display.textContent + '.';
+    handleDecimal();
   });
 
   backspaceButton.addEventListener("click", (e) => {
-    document.querySelector(".display").textContent = '';
-    if (dispOperator && dispOperandA) {
-      dispOperandB = '';
-    } else {
-      dispOperandA = '';
-    }
-  })
+    handleBackspace();
+  });
 
   function handleDigit(digit) {
     if (dispOperator) {
@@ -163,6 +119,83 @@ function setUpButtonClicks() {
       display.textContent == divideByZeroError) ? 
       digit : display.textContent + digit; 
   }
+
+  function handleOp(op) {
+    if (dispOperandA) {
+      const prevOp = dispOperator;
+      dispOperator = op;
+
+      if (dispOperandB && prevOp) {
+        if (dispOperandB == '0' && (prevOp == '÷' || prevOp == '/')) {
+          display.textContent = divideByZeroError;
+          dispOperandA = '';
+          dispOperator = '';
+        } else {
+          let result = operate(prevOp, Number(dispOperandA), Number(dispOperandB));
+          result = round(result, 9);
+          display.textContent = result;
+          dispOperandA = String(result); 
+        }
+        dispOperandB = '';
+      }
+    }
+  }
+
+   function handleEquals() {
+    if (dispOperandA && dispOperandB && dispOperator) {
+      if (dispOperandB == '0' && (dispOperator == '÷' || dispOperator == '/')) {
+        display.textContent = divideByZeroError;
+        dispOperandA = '';
+        dispOperator = '';
+      } else {
+        let result = operate(dispOperator, Number(dispOperandA), Number(dispOperandB));
+        result = round(result, 9);
+        display.textContent = result;
+        dispOperandA = String(result);
+        dispOperator = '=';
+      }
+      dispOperandB = '';
+    }
+  }
+
+  function handleClear() {
+    display.textContent = '0';
+    dispOperandA = '0';
+    dispOperandB = '';
+    dispOperator = '';
+  }
+
+  function handleDecimal() {
+    if (display.textContent.includes(".")) {
+      return;
+    }
+
+    if (dispOperator) {
+      if (display.textContent == dispOperandA) {
+        display.textContent = '';
+      }
+      if (dispOperator == '=') {
+        dispOperandA = '.';
+        dispOperator = '';
+      } else {
+        dispOperandB += '.';
+      }
+    } else {
+      dispOperandA += '.';
+    }
+
+    display.textContent = (display.textContent == divideByZeroError) ? 
+      '.' : display.textContent + '.';
+  }
+
+  function handleBackspace() {
+    display.textContent = '';
+    if (dispOperator && dispOperandA) {
+      dispOperandB = '';
+    } else {
+      dispOperandA = '';
+    }
+  }
 }
 
-setUpButtonClicks();
+setUpButtonClicksAndPresses();
