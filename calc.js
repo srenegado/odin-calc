@@ -45,6 +45,7 @@ function setUpButtonClicks() {
   const equalsButton = document.querySelector(".equals");
   const clearButton = document.querySelector(".clear");
   const decimalButton = document.querySelector(".decimal");
+  const backspaceButton = document.querySelector(".backspace");
 
   for (let i = 0; i < digitButtons.length; i++) {
     digitButtons[i].addEventListener("click", (e) => {
@@ -109,14 +110,14 @@ function setUpButtonClicks() {
       }
       dispOperandB = '';
     }
-  })
+  });
 
   clearButton.addEventListener("click", (e) => {
     document.querySelector(".display").textContent = '0';
     dispOperandA = '0';
     dispOperandB = '';
     dispOperator = '';
-  })
+  });
 
   decimalButton.addEventListener("click", (e) => {
     const display = document.querySelector(".display");
@@ -141,6 +142,15 @@ function setUpButtonClicks() {
 
     display.textContent = (display.textContent == divideByZeroError) ? 
       '.' : display.textContent + '.';
+  });
+
+  backspaceButton.addEventListener("click", (e) => {
+    document.querySelector(".display").textContent = '';
+    if (dispOperator && dispOperandA) {
+      dispOperandB = '';
+    } else {
+      dispOperandA = '';
+    }
   })
 }
 

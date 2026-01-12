@@ -16,6 +16,7 @@ button {
 
 .display {
   margin: 0 auto;
+  height: 37px;
   border: 1px solid grey;
   border-radius: 10px;
   font-size: 24pt;
